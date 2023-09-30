@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.7/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Custom CSS */
+        .post-source {
+            font-size: 12px;
+            margin-left: 4px;
+            color: #666;
+        }
+    </style>
+    <title>Hacker News Clone</title>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-600 p-2 text-white">
+        <div class="container mx-auto">
+            <h1 class="text-lg font-semibold">Hacker News Clone</h1>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="container mx-auto py-4 flex space-x-4">
+        <!-- Post List -->
+        <div class="max-w-3xl flex-1">
+            <!-- Individual Post -->
+            <div class="bg-white p-4 shadow-md rounded-md space-y-2">
+                <div class="flex items-center">
+                    <span class="text-gray-500">#1</span>
+                    <h2 class="text-lg font-semibold ml-2">
+                        <a href="#" class="post-title">Post Title</a>
+                        <span class="post-source">(sourcename.com)</span>
+                    </h2>
+                </div>
+                <div class="text-gray-600 text-sm">
+                    Points: 100 | by Author | 1 hour ago | <a href="#">100 comments</a>
+                </div>
+            </div>
+            <!-- Repeat for other posts -->
+        </div>
+
+        <!-- Advertisement / Publicity -->
+        <div class="w-1/4">
+            <!-- Place your advertising content here -->
+            <div class="bg-white p-4 shadow-md rounded-md">
+                <p class="text-gray-600 text-center">Advertisement</p>
+                <!-- Add your ad content here -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>

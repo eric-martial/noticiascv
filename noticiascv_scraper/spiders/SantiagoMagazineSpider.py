@@ -45,6 +45,6 @@ class SantiagoMagaZineSpider(scrapy.Spider):
         item['date_pub'] = article_publication[-1]
         item['link'] = req_url
         item['topic'] = article_block.css('div.topic-box-sm::text').get()
-        item['text_html'] = article_block.css('blockquote,p').getall()
+        item['text_html'] = ' <br/> '.join(article_block.css('blockquote::text,p::text').getall())
 
         return item

@@ -1,13 +1,24 @@
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
+from supabase import create_client, Client
+from dotenv import dotenv_values
+
+config = dotenv_values("../.env")
 
 
-# useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
+class SaveArticlesToSupabasePipeline:
 
+    def __init__(self):
+        self.url: str = config.get("SUPABASE_URL")
+        self.key: str = config.get("SUPABASE_KEY")
+        self.supabase: Client = create_client(self.url, self.key)
 
-class NoticiascvScraperPipeline:
     def process_item(self, item, spider):
+        data, count = self.supabase.table('articles').insert({
+                                    'source':  item['source'],
+                                    'title': item['title'],
+                                    'author':  item['author'],
+                                    'date_pub':  item['date_pub'],
+                                    'link':  item['link'],
+                                    'topic':  item['topic'],
+                                    'content':  item['text_html']
+                                }).execute()
         return item

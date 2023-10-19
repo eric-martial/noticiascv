@@ -2,6 +2,7 @@ from ..items import ArticleItem
 import scrapy
 import dateparser
 from datetime import datetime
+import html
 
 
 class anacao(scrapy.Spider):
@@ -37,7 +38,7 @@ class anacao(scrapy.Spider):
     def __normalize_date(self, date_obj):
         if not isinstance(date_obj, datetime):
             return None
-        return date_obj.strftime('%Y-%m-%d')
+        return date_obj.strftime('%Y-%m-%d %H:%M:%S')
     
     def parse_news(self, response):
         req_url = response.url
@@ -54,7 +55,7 @@ class anacao(scrapy.Spider):
         item['topic'] = response.css('header#post-header span::text').get()
         content_string = response.css('div#content-main p::text').getall()
         filtered_strings = [s.strip() for s in content_string if s.strip()]
-        item['text_html'] = ' <br/> '.join(filtered_strings)
+        item['text_html'] = html.unescape(' <br/> '.join(filtered_strings))
 
         return item
 

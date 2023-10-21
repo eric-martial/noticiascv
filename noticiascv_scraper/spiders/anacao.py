@@ -23,7 +23,7 @@ class anacao(scrapy.Spider):
         'FEED_EXPORT_ENCODING': 'utf-8',
     }
 
-    def parse(self, response):
+    async def parse(self, response):
         hero_urls = response.css('div#feat-top-wrap a::attr(href)').getall()
         page_urls = hero_urls + response.css('div#archive-list-wrap li>a::attr(href)').getall()
 
@@ -40,12 +40,11 @@ class anacao(scrapy.Spider):
             return None
         return date_obj.strftime('%Y-%m-%d %H:%M:%S')
     
-    def parse_news(self, response):
+    async def parse_news(self, response):
         req_url = response.url
-
-        self.logger.info(f"request page: {req_url}")
-
+        
         item = ArticleItem()
+
         item['source'] = self.name
         item['title'] = response.css('header#post-header h1::text').get()
         item['author'] = response.css('header#post-header span.author-name a::text').get()     

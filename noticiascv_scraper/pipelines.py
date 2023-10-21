@@ -1,7 +1,10 @@
 from supabase import create_client, Client
 from dotenv import dotenv_values
+from pathlib import Path
 
-config = dotenv_values('../.env')
+dotenv_path = Path('C:/Users/USER/Documents/noticiascv/.env')
+
+config = dotenv_values(dotenv_path)
 
 
 class SaveArticlesToSupabasePipeline:

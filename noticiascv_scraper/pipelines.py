@@ -1,8 +1,8 @@
 from supabase import create_client, Client
 from dotenv import dotenv_values
-from pathlib import Path
+import os
 
-dotenv_path = Path('C:/Users/USER/Documents/noticiascv/.env')
+dotenv_path = os.path.abspath('.env')
 
 config = dotenv_values(dotenv_path)
 

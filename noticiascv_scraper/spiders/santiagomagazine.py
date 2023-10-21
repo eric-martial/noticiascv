@@ -1,7 +1,7 @@
 from ..items import ArticleItem
 import scrapy
 import dateparser
-from datetime import datetime
+from ..utils import normalize_date, article_exist
 import html
 
 
@@ -26,25 +26,20 @@ class SantiagoMagaZineSpider(scrapy.Spider):
     def parse(self, response):
         page_urls = response.css('h3.title-semibold-dark a::attr(href)').getall()
 
-        self.logger.info(page_urls)
 
         for page_url in page_urls:
             page_url = response.urljoin(page_url)
-            yield scrapy.Request(url=page_url, callback=self.parse_news)
+            if not article_exist(page_url):
+                self.logger.info(f'Page to be saved: {page_urls}')
+                yield scrapy.Request(url=page_url, callback=self.parse_news)
 
         next_page = response.css('div.pagination-btn-wrapper li.page-item a::attr(href)').extract()[-1]
         if next_page is not None:
             yield response.follow(next_page, callback=self.parse)
 
-    def __normalize_date(self, date_obj):
-        if not isinstance(date_obj, datetime):
-            return None
-        return date_obj.strftime('%Y-%m-%d %H:%M:%S')
 
     def parse_news(self, response):
         req_url = response.url
-
-        self.logger.info(f"request page: {req_url}")
 
         item = ArticleItem()
         item['source'] = self.name
@@ -53,10 +48,9 @@ class SantiagoMagaZineSpider(scrapy.Spider):
         article_publication = response.css('div.news-details-layout1 ul.post-info-dark>li>a::text').getall()
         item['author'] = article_publication[-3]        
         parsed_date = dateparser.parse(article_publication[-1], settings={'TIMEZONE': 'UTC-1'})
-        item['date_pub'] = self.__normalize_date(parsed_date)
+        item['date_pub'] = normalize_date(parsed_date)
         item['link'] = req_url
         item['topic'] = article_block.css('div.topic-box-sm::text').get()
         item['text_html'] = html.unescape(' <br/> '.join(article_block.css('blockquote::text,p::text').getall()))
 
         return item
-

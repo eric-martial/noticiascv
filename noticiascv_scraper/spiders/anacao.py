@@ -1,7 +1,7 @@
 from ..items import ArticleItem
 import scrapy
 import dateparser
-from datetime import datetime
+from ..utils import normalize_date, article_exist
 import html
 
 
@@ -29,27 +29,24 @@ class anacao(scrapy.Spider):
 
         for page_url in page_urls:
             page_url = response.urljoin(page_url)
-            yield scrapy.Request(url=page_url, callback=self.parse_news)
+            if not article_exist(page_url):
+                self.logger.info(f'Page to be saved: {page_urls}')
+                yield scrapy.Request(url=page_url, callback=self.parse_news)
 
         next_page = response.css('div.pagination a::attr(href)').getall()[-2]
         if next_page is not None:
             yield response.follow(next_page, callback=self.parse)
 
-    def __normalize_date(self, date_obj):
-        if not isinstance(date_obj, datetime):
-            return None
-        return date_obj.strftime('%Y-%m-%d %H:%M:%S')
-    
     async def parse_news(self, response):
         req_url = response.url
-        
+
         item = ArticleItem()
 
         item['source'] = self.name
         item['title'] = response.css('header#post-header h1::text').get()
         item['author'] = response.css('header#post-header span.author-name a::text').get()     
         parsed_date = dateparser.parse(response.css('header#post-header span.post-date time::text').get())
-        item['date_pub'] = self.__normalize_date(parsed_date)
+        item['date_pub'] = normalize_date(parsed_date)
         item['link'] = req_url
         item['topic'] = response.css('header#post-header span::text').get()
         content_string = response.css('div#content-main p::text').getall()
@@ -57,4 +54,3 @@ class anacao(scrapy.Spider):
         item['text_html'] = html.unescape(' <br/> '.join(filtered_strings))
 
         return item
-

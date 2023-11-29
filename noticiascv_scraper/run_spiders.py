@@ -2,10 +2,10 @@ import scrapy
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from .spiders.santiagomagazine import SantiagoMagaZineSpider
-from .spiders.anacao import anacao
+from .spiders.anacao import AnacaoSpider
 
 settings = get_project_settings()
 process = CrawlerProcess(settings)
-process.crawl(anacao)
+process.crawl(AnacaoSpider)
 process.crawl(SantiagoMagaZineSpider)
 process.start()
